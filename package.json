@@ -1,0 +1,15 @@
+{
+  "name": "order-tracking-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fullstack Order Tracking & Fabrication Pipeline (React + Tailwind + Node/Express + SQLite + Socket.IO)",
+  "scripts": {
+    "dev": "npm run dev --prefix cms",
+    "build": "npm run build --prefix cms",
+    "start": "npm run start --prefix cms",
+    "dev:fullstack": "concurrently -n \"SERVER,CLIENT\" -c \"cyan,magenta\" \"npm run start --prefix server\" \"npm run dev --prefix client\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
