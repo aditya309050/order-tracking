@@ -76,42 +76,61 @@ export default function Navbar({ onOpenNewOrder }) {
               </div>
             </Link>
 
-            {/* Navigation Tabs */}
-            <nav className="hidden md:flex items-center gap-1.5 border-l border-[#1f2533] pl-4">
-              <NavLink to="/" end className={navItemClass}>
-                <ShieldCheck size={13} className="text-blue-400" />
-                <span>Client Portal</span>
-              </NavLink>
+            {/* Navigation Tabs (Only visible when logged in) */}
+            {isAuthenticated && (
+              <nav className="hidden md:flex items-center gap-1.5 border-l border-[#1f2533] pl-4">
+                {/* Client Only Tabs */}
+                {isClient && (
+                  <>
+                    <NavLink to="/client" className={navItemClass}>
+                      <Search size={13} className="text-blue-400" />
+                      <span>My Orders</span>
+                    </NavLink>
+                    <NavLink to="/track" className={navItemClass}>
+                      <Search size={13} className="text-slate-400" />
+                      <span>Track Order</span>
+                    </NavLink>
+                  </>
+                )}
 
-              {isClient && (
-                <NavLink to="/client" className={navItemClass}>
-                  <Search size={13} className="text-slate-400" />
-                  <span>My Orders</span>
-                </NavLink>
-              )}
+                {/* Office Admin Console */}
+                {isOfficeAdmin && (
+                  <>
+                    <NavLink to="/officeadmin" className={navItemClass}>
+                      <Building size={13} className="text-blue-400" />
+                      <span>Office Console</span>
+                    </NavLink>
+                    <NavLink to="/warehouseadmin" className={navItemClass}>
+                      <Kanban size={13} className="text-amber-400" />
+                      <span>Warehouse Ops</span>
+                    </NavLink>
+                  </>
+                )}
 
-              <NavLink to="/overview" className={navItemClass}>
-                <span>Live Overview</span>
-              </NavLink>
+                {/* Warehouse Admin Console (if warehouse only) */}
+                {isWarehouseAdmin && !isOfficeAdmin && (
+                  <NavLink to="/warehouseadmin" className={navItemClass}>
+                    <Kanban size={13} className="text-amber-400" />
+                    <span>Warehouse Ops</span>
+                  </NavLink>
+                )}
 
-              <NavLink to="/track/ORD-1025" className={navItemClass}>
-                <Search size={13} className="text-slate-400" />
-                <span>Tracking Demo</span>
-              </NavLink>
-
-              {/* Payload CMS Studio (Port 3001) - Direct Launcher */}
-              <a 
-                href="http://localhost:3001/admin" 
-                target="_blank" 
-                rel="noreferrer" 
-                className="relative flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-purple-300 hover:text-white bg-purple-950/60 hover:bg-purple-900/80 rounded-md border border-purple-800/60 transition-colors shadow-sm"
-                title="Launch Payload CMS Studio on Port 3001"
-              >
-                <Database size={13} className="text-purple-400" />
-                <span>Payload CMS Admin</span>
-                <ExternalLink size={10} className="text-purple-400/80" />
-              </a>
-            </nav>
+                {/* Admin Hub - Directly redirects to Payload CMS Admin (Only for Admins) */}
+                {(isOfficeAdmin || isWarehouseAdmin) && (
+                  <a 
+                    href={import.meta.env.VITE_PAYLOAD_CMS_URL || 'http://localhost:3001/admin'} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="relative flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-purple-300 hover:text-white bg-purple-950/60 hover:bg-purple-900/80 rounded-md border border-purple-800/60 transition-colors shadow-sm"
+                    title="Launch Payload CMS Admin (/admin)"
+                  >
+                    <Database size={13} className="text-purple-400" />
+                    <span>Admin Hub</span>
+                    <ExternalLink size={10} className="text-purple-400/80" />
+                  </a>
+                )}
+              </nav>
+            )}
           </div>
 
           {/* Right actions: User identity, Live Status, Logout / Login */}
@@ -170,52 +189,56 @@ export default function Navbar({ onOpenNewOrder }) {
           </div>
         </div>
 
-        {/* Mobile Navigation Row */}
-        <div className="flex md:hidden items-center justify-around py-1.5 border-t border-[#1f2533]">
-          <NavLink to="/" end className={navItemClass}>
-            <span className="text-xs">Overview</span>
-          </NavLink>
+        {/* Mobile Navigation Row (Only visible when logged in) */}
+        {isAuthenticated && (
+          <div className="flex md:hidden items-center justify-around py-1.5 border-t border-[#1f2533]">
+            {isClient && (
+              <>
+                <NavLink to="/client" className={navItemClass}>
+                  <span className="text-xs">My Orders</span>
+                </NavLink>
+                <NavLink to="/track" className={navItemClass}>
+                  <span className="text-xs">Track Order</span>
+                </NavLink>
+              </>
+            )}
 
-          {isOfficeAdmin && (
-            <>
-              <NavLink to="/officeadmin" className={navItemClass}>
-                <span className="text-xs">Office</span>
-              </NavLink>
-              <NavLink to="/warehouseadmin" className={navItemClass}>
-                <span className="text-xs">Warehouse</span>
-              </NavLink>
-            </>
-          )}
+            {isOfficeAdmin && (
+              <>
+                <NavLink to="/officeadmin" className={navItemClass}>
+                  <span className="text-xs">Office</span>
+                </NavLink>
+                <NavLink to="/warehouseadmin" className={navItemClass}>
+                  <span className="text-xs">Warehouse</span>
+                </NavLink>
+                <a
+                  href={import.meta.env.VITE_PAYLOAD_CMS_URL || 'http://localhost:3001/admin'}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={navItemClass({ isActive: false })}
+                >
+                  <span className="text-xs text-purple-300">Admin Hub</span>
+                </a>
+              </>
+            )}
 
-          {isWarehouseAdmin && (
-            <NavLink to="/warehouseadmin" className={navItemClass}>
-              <span className="text-xs">Warehouse</span>
-            </NavLink>
-          )}
-
-          {isClient && (
-            <NavLink to="/client" className={navItemClass}>
-              <span className="text-xs">My Orders</span>
-            </NavLink>
-          )}
-
-          {!isAuthenticated && (
-            <>
-              <NavLink to="/" end className={navItemClass}>
-                <span className="text-xs">Sign In</span>
-              </NavLink>
-              <NavLink to="/overview" className={navItemClass}>
-                <span className="text-xs">Overview</span>
-              </NavLink>
-              <NavLink to="/admin" className={navItemClass}>
-                <span className="text-xs">Admin Hub</span>
-              </NavLink>
-              <NavLink to="/track/ORD-1025" className={navItemClass}>
-                <span className="text-xs">Track Demo</span>
-              </NavLink>
-            </>
-          )}
-        </div>
+            {isWarehouseAdmin && !isOfficeAdmin && (
+              <>
+                <NavLink to="/warehouseadmin" className={navItemClass}>
+                  <span className="text-xs">Warehouse</span>
+                </NavLink>
+                <a
+                  href={import.meta.env.VITE_PAYLOAD_CMS_URL || 'http://localhost:3001/admin'}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={navItemClass({ isActive: false })}
+                >
+                  <span className="text-xs text-purple-300">Admin Hub</span>
+                </a>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </header>
   );

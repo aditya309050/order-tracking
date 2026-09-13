@@ -56,13 +56,6 @@ export default function Login() {
     }
   };
 
-  const handleQuickFill = (userVal, passVal, tab = 'client') => {
-    setActiveTab(tab);
-    setUsername(userVal);
-    setPassword(passVal);
-    setError(null);
-  };
-
   return (
     <div className="min-h-[85vh] flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-5">
@@ -189,61 +182,6 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Quick Demo Helper */}
-          <div className="pt-4 border-t border-[#1f2533] space-y-2">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 block">
-              1-Click Demo Accounts
-            </span>
-            
-            <div className="grid grid-cols-3 gap-1.5">
-              <button
-                type="button"
-                onClick={() => handleQuickFill('office', 'office123', 'admin')}
-                className="p-2 rounded-lg bg-[#161a24] hover:bg-slate-800 border border-[#1f2533] text-left transition-colors"
-              >
-                <div className="text-[10px] font-semibold text-blue-400">Office Admin</div>
-                <div className="text-[9px] font-mono text-slate-500">office</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickFill('warehouse', 'warehouse123', 'admin')}
-                className="p-2 rounded-lg bg-[#161a24] hover:bg-slate-800 border border-[#1f2533] text-left transition-colors"
-              >
-                <div className="text-[10px] font-semibold text-amber-400">Warehouse</div>
-                <div className="text-[9px] font-mono text-slate-500">warehouse</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickFill('abc_client', 'abc123', 'client')}
-                className="p-2 rounded-lg bg-[#161a24] hover:bg-slate-800 border border-[#1f2533] text-left transition-colors"
-              >
-                <div className="text-[10px] font-semibold text-emerald-400">Client Demo</div>
-                <div className="text-[9px] font-mono text-slate-500">abc_client</div>
-              </button>
-            </div>
-          </div>
-
-        </div>
-
-        {/* Payload CMS Direct Link Helper */}
-        <div className="rounded-lg bg-[#11141c]/60 border border-purple-950 p-3 flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2">
-            <Database size={15} className="text-purple-400 shrink-0" />
-            <span className="text-slate-400 text-[11px]">
-              Looking for <strong>Payload CMS Studio</strong>?
-            </span>
-          </div>
-          <a
-            href="http://localhost:3001/admin"
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1 text-[11px] text-purple-400 hover:text-purple-300 font-medium hover:underline"
-          >
-            <span>Open Port 3001</span>
-            <ExternalLink size={11} />
-          </a>
         </div>
 
       </div>

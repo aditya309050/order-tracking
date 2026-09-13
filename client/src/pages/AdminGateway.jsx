@@ -14,6 +14,8 @@ import { useAuth } from '../context/AuthContext';
 
 export default function AdminGateway() {
   const { user, isAuthenticated, isOfficeAdmin } = useAuth();
+  const isLocalhost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  const cmsUrl = import.meta.env.VITE_PAYLOAD_CMS_URL || (isLocalhost ? 'http://localhost:3001/admin' : null);
 
   return (
     <div className="max-w-4xl mx-auto py-10 px-4 space-y-8">
@@ -37,7 +39,7 @@ export default function AdminGateway() {
         {/* Card 1: Payload CMS (Port 3001) */}
         <div className="rounded-xl bg-[#11141c] border border-purple-900/40 p-6 flex flex-col justify-between relative overflow-hidden shadow-lg group hover:border-purple-600/60 transition-all">
           <div className="absolute top-0 right-0 px-3 py-1 bg-purple-950/80 border-b border-l border-purple-800/40 rounded-bl-lg text-[10px] font-mono text-purple-300">
-            PORT 3001
+            {isLocalhost ? 'PORT 3001' : 'CMS STUDIO'}
           </div>
           
           <div className="space-y-4">
@@ -59,7 +61,9 @@ export default function AdminGateway() {
             <div className="p-3 rounded-lg bg-[#090b10] border border-[#1f2533] space-y-1.5 text-[11px] font-mono">
               <div className="flex items-center justify-between text-slate-400">
                 <span>Address:</span>
-                <span className="text-purple-300 font-semibold">http://localhost:3001/admin</span>
+                <span className="text-purple-300 font-semibold">
+                  {cmsUrl || 'Deploy cms/ to Vercel'}
+                </span>
               </div>
               <div className="flex items-center justify-between text-slate-400">
                 <span>Database:</span>
@@ -73,15 +77,21 @@ export default function AdminGateway() {
           </div>
 
           <div className="pt-6 mt-4 border-t border-[#1f2533] space-y-3">
-            <a
-              href="http://localhost:3001/admin"
-              target="_blank"
-              rel="noreferrer"
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold shadow-md transition-colors"
-            >
-              <span>Launch Payload CMS (/admin)</span>
-              <ExternalLink size={14} />
-            </a>
+            {cmsUrl ? (
+              <a
+                href={cmsUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold shadow-md transition-colors"
+              >
+                <span>Launch Payload CMS (/admin)</span>
+                <ExternalLink size={14} />
+              </a>
+            ) : (
+              <div className="p-2.5 rounded-lg bg-purple-950/30 border border-purple-900/40 text-center text-[11px] text-purple-300">
+                Payload CMS runs locally on Port 3001. On Vercel, use the <strong>Operations Consoles</strong> to the right!
+              </div>
+            )}
             <p className="text-[10px] text-slate-500 text-center">
               Requires CMS dev server: <code className="text-slate-400 bg-slate-900 px-1 py-0.5 rounded">npm run dev:cms</code>
             </p>

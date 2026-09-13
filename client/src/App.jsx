@@ -15,19 +15,21 @@ import AdminGateway from './pages/AdminGateway';
 import { useAuth } from './context/AuthContext';
 
 function RedirectToPayload() {
+  const cmsUrl = import.meta.env.VITE_PAYLOAD_CMS_URL || 'http://localhost:3001/admin';
+
   React.useEffect(() => {
-    window.location.href = 'http://localhost:3001/admin';
-  }, []);
+    window.location.href = cmsUrl;
+  }, [cmsUrl]);
 
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center text-center space-y-4 p-6">
       <div className="w-10 h-10 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
       <div>
         <h2 className="text-base font-bold text-white font-mono">Redirecting to Payload CMS Admin...</h2>
-        <p className="text-xs text-slate-400 mt-1">Opening the Admin Studio at <code className="text-purple-300">http://localhost:3001/admin</code></p>
+        <p className="text-xs text-slate-400 mt-1">Opening the Admin Studio at <code className="text-purple-300">{cmsUrl}</code></p>
       </div>
       <a
-        href="http://localhost:3001/admin"
+        href={cmsUrl}
         className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold shadow-md transition-colors"
       >
         Click here if not redirected automatically &rarr;
@@ -89,22 +91,31 @@ function AppContent() {
             }
           />
 
-          {/* All Admin routes automatically forward to Payload CMS (Port 3001) */}
+          {/* Administrative Portals & Consoles */}
           <Route path="/admin" element={<RedirectToPayload />} />
-          <Route path="/officeadmin" element={<RedirectToPayload />} />
-          <Route path="/office" element={<RedirectToPayload />} />
-          <Route path="/warehouseadmin" element={<RedirectToPayload />} />
-          <Route path="/warehouse" element={<RedirectToPayload />} />
+          <Route
+            path="/officeadmin"
+            element={
+              <ProtectedRoute allowedRoles={['OFFICE_ADMIN']}>
+                <OfficeAdmin onOpenNewOrder={() => setIsNewOrderOpen(true)} />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/office" element={<Navigate to="/officeadmin" replace />} />
+          <Route
+            path="/warehouseadmin"
+            element={
+              <ProtectedRoute allowedRoles={['WAREHOUSE_ADMIN', 'OFFICE_ADMIN']}>
+                <WarehouseAdmin />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/warehouse" element={<Navigate to="/warehouseadmin" replace />} />
+          <Route path="/cms-admin" element={<RedirectToPayload />} />
         </Routes>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-[#1f2533] bg-[#090b10] py-4 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="text-[11px]">Vanguard OMS &bull; Fabrication Operations & Dispatch Ledger</p>
-          <p className="font-mono text-[10px] text-slate-600">Role-Based Security &bull; Port 3000 / Port 5000</p>
-        </div>
-      </footer>
+
 
       {/* Global New Order Modal */}
       <NewOrderModal
