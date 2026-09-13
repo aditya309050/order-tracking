@@ -4,7 +4,10 @@
   "private": true,
   "description": "Fullstack Order Tracking & Fabrication Pipeline (React + Tailwind + Node/Express + SQLite + Socket.IO)",
   "scripts": {
-    "dev": "npm run dev --prefix cms",
+    "dev": "concurrently -n \"CLIENT(3000),PAYLOAD_CMS(3001)\" -c \"cyan,magenta\" \"npm run dev --prefix client\" \"npm run dev --prefix cms\"",
+    "dev:all": "concurrently -n \"CLIENT(3000),PAYLOAD_CMS(3001)\" -c \"cyan,magenta\" \"npm run dev --prefix client\" \"npm run dev --prefix cms\"",
+    "dev:client": "npm run dev --prefix client",
+    "dev:cms": "npm run dev --prefix cms",
     "build": "npm run build --prefix cms",
     "start": "npm run start --prefix cms",
     "dev:fullstack": "concurrently -n \"SERVER,CLIENT\" -c \"cyan,magenta\" \"npm run start --prefix server\" \"npm run dev --prefix client\""

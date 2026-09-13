@@ -9,6 +9,7 @@ import {
   LogOut,
   LogIn,
   UserCheck,
+  ShieldCheck,
   ShieldAlert,
   Database,
   ExternalLink
@@ -75,60 +76,41 @@ export default function Navbar({ onOpenNewOrder }) {
               </div>
             </Link>
 
-            {/* Navigation Tabs Based on Role */}
-            <nav className="hidden md:flex items-center gap-1 border-l border-[#1f2533] pl-4">
+            {/* Navigation Tabs */}
+            <nav className="hidden md:flex items-center gap-1.5 border-l border-[#1f2533] pl-4">
               <NavLink to="/" end className={navItemClass}>
-                <span>Overview</span>
+                <ShieldCheck size={13} className="text-blue-400" />
+                <span>Client Portal</span>
               </NavLink>
 
-              {/* Office Admin Tabs */}
-              {isOfficeAdmin && (
-                <>
-                  <NavLink to="/officeadmin" className={navItemClass}>
-                    <Building size={13} className="text-slate-400" />
-                    <span>Office Intake</span>
-                  </NavLink>
-                  <NavLink to="/warehouseadmin" className={navItemClass}>
-                    <Kanban size={13} className="text-slate-400" />
-                    <span>Shop Floor</span>
-                  </NavLink>
-                  <a 
-                    href="http://localhost:3001/admin" 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    className="relative flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-purple-400 hover:text-purple-300 hover:bg-purple-950/40 rounded-md border border-purple-800/40 transition-colors"
-                    title="Open Payload CMS Editorial Admin (/admin on port 3001)"
-                  >
-                    <Database size={13} />
-                    <span>Payload CMS</span>
-                    <ExternalLink size={10} className="text-purple-400/80" />
-                  </a>
-                </>
-              )}
-
-              {/* Warehouse Admin Tab */}
-              {isWarehouseAdmin && (
-                <NavLink to="/warehouseadmin" className={navItemClass}>
-                  <Kanban size={13} className="text-slate-400" />
-                  <span>Shop Floor</span>
-                </NavLink>
-              )}
-
-              {/* Client Portal Tab */}
               {isClient && (
                 <NavLink to="/client" className={navItemClass}>
                   <Search size={13} className="text-slate-400" />
-                  <span>My Orders & Tracking</span>
+                  <span>My Orders</span>
                 </NavLink>
               )}
 
-              {/* Public/Unauthenticated Quick Demo Tracking */}
-              {!isAuthenticated && (
-                <NavLink to="/track/ORD-1025" className={navItemClass}>
-                  <Search size={13} className="text-slate-400" />
-                  <span>Tracking Demo</span>
-                </NavLink>
-              )}
+              <NavLink to="/overview" className={navItemClass}>
+                <span>Live Overview</span>
+              </NavLink>
+
+              <NavLink to="/track/ORD-1025" className={navItemClass}>
+                <Search size={13} className="text-slate-400" />
+                <span>Tracking Demo</span>
+              </NavLink>
+
+              {/* Payload CMS Studio (Port 3001) - Direct Launcher */}
+              <a 
+                href="http://localhost:3001/admin" 
+                target="_blank" 
+                rel="noreferrer" 
+                className="relative flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-purple-300 hover:text-white bg-purple-950/60 hover:bg-purple-900/80 rounded-md border border-purple-800/60 transition-colors shadow-sm"
+                title="Launch Payload CMS Studio on Port 3001"
+              >
+                <Database size={13} className="text-purple-400" />
+                <span>Payload CMS Admin</span>
+                <ExternalLink size={10} className="text-purple-400/80" />
+              </a>
             </nav>
           </div>
 
@@ -218,9 +200,20 @@ export default function Navbar({ onOpenNewOrder }) {
           )}
 
           {!isAuthenticated && (
-            <NavLink to="/login" className={navItemClass}>
-              <span className="text-xs">Sign In</span>
-            </NavLink>
+            <>
+              <NavLink to="/" end className={navItemClass}>
+                <span className="text-xs">Sign In</span>
+              </NavLink>
+              <NavLink to="/overview" className={navItemClass}>
+                <span className="text-xs">Overview</span>
+              </NavLink>
+              <NavLink to="/admin" className={navItemClass}>
+                <span className="text-xs">Admin Hub</span>
+              </NavLink>
+              <NavLink to="/track/ORD-1025" className={navItemClass}>
+                <span className="text-xs">Track Demo</span>
+              </NavLink>
+            </>
           )}
         </div>
       </div>

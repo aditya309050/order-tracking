@@ -6,29 +6,41 @@ export const Users: CollectionConfig = {
   admin: {
     useAsTitle: 'email',
     group: 'Admin',
+    defaultColumns: ['email', 'role', 'createdAt'],
+  },
+  hooks: {
+    beforeChange: [
+      ({ data }) => {
+        if (data) {
+          if (!data.name && data.email) {
+            data.name = data.email.split('@')[0];
+          }
+          if (!data.role) {
+            data.role = 'OFFICE_ADMIN';
+          }
+        }
+        return data;
+      },
+    ],
   },
   fields: [
     {
       name: 'name',
       type: 'text',
-      required: true,
+      admin: {
+        hidden: true,
+      },
     },
     {
       name: 'role',
       type: 'select',
-      required: true,
-      defaultValue: 'CLIENT',
+      defaultValue: 'OFFICE_ADMIN',
       options: [
         { label: 'Office Administrator', value: 'OFFICE_ADMIN' },
         { label: 'Warehouse & Shop Floor', value: 'WAREHOUSE_ADMIN' },
-        { label: 'Client / Customer', value: 'CLIENT' },
       ],
-    },
-    {
-      name: 'client_access_id',
-      type: 'text',
       admin: {
-        description: 'For client accounts, matches their order tracking portal ID',
+        hidden: true,
       },
     },
   ],

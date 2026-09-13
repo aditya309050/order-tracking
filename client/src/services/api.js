@@ -17,12 +17,14 @@ export async function loginUser(credentials) {
   if (isSupabaseConfigured()) {
     const { username, password } = credentials;
     // Check if order number / client access id matches in orders
-    const { data: matchedOrder } = await supabase
+    const { data: matchedOrders } = await supabase
       .from('orders')
       .select('*')
       .or(`client_access_id.eq.${username},order_number.eq.${username}`)
       .eq('client_password', password)
-      .single();
+      .limit(1);
+
+    const matchedOrder = matchedOrders?.[0];
 
     if (matchedOrder) {
       return {
@@ -38,8 +40,35 @@ export async function loginUser(credentials) {
       };
     }
 
+    // Email & Password login for Admin via Payload CMS users API
+    if (username.includes('@')) {
+      try {
+        const payloadRes = await fetch('http://localhost:3001/api/users/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: username.toLowerCase().trim(), password })
+        });
+        const payloadData = await payloadRes.json();
+        if (payloadRes.ok && payloadData.user) {
+          return {
+            success: true,
+            token: payloadData.token || `payload_${payloadData.user.id}`,
+            user: {
+              id: payloadData.user.id,
+              username: payloadData.user.email,
+              email: payloadData.user.email,
+              role: payloadData.user.role || 'OFFICE_ADMIN',
+              name: payloadData.user.name || payloadData.user.email.split('@')[0]
+            }
+          };
+        }
+      } catch (e) {
+        // Fall through to standard checks
+      }
+    }
+
     // Default admin checks for Supabase mode
-    if (username === 'office' && password === 'office123') {
+    if ((username === 'office' || username === 'admin') && (password === 'office123' || password === 'admin123')) {
       return {
         success: true,
         token: 'sb_admin_token',

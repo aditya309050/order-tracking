@@ -146,6 +146,7 @@ export interface Order {
   delivery_driver?: string | null;
   driver_phone?: string | null;
   tracking_number?: string | null;
+  estimated_delivery?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -170,12 +171,8 @@ export interface OrderActivity {
  */
 export interface User {
   id: number;
-  name: string;
-  role: 'OFFICE_ADMIN' | 'WAREHOUSE_ADMIN' | 'CLIENT';
-  /**
-   * For client accounts, matches their order tracking portal ID
-   */
-  client_access_id?: string | null;
+  name?: string | null;
+  role?: ('OFFICE_ADMIN' | 'WAREHOUSE_ADMIN') | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -296,6 +293,7 @@ export interface OrdersSelect<T extends boolean = true> {
   delivery_driver?: T;
   driver_phone?: T;
   tracking_number?: T;
+  estimated_delivery?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -320,7 +318,6 @@ export interface OrderActivitiesSelect<T extends boolean = true> {
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
   role?: T;
-  client_access_id?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

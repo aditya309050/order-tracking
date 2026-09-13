@@ -4,9 +4,9 @@
   "description": "Payload CMS 3.0 configuration connected to Supabase PostgreSQL for order tracking and fabrication management",
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbo -p 3000",
+    "dev": "next dev -p 3001",
     "build": "next build",
-    "start": "next start -p 3000"
+    "start": "next start -p 3001"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.88.0",

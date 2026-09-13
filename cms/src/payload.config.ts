@@ -1,3 +1,6 @@
+// Allow Supabase SSL certificate chain in Node.js
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 import { buildConfig } from 'payload';
 import { postgresAdapter } from '@payloadcms/db-postgres';
 import { sqliteAdapter } from '@payloadcms/db-sqlite';
@@ -11,7 +14,11 @@ import { fileURLToPath } from 'url';
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
-const databaseUri = process.env.DATABASE_URI || process.env.SUPABASE_POSTGRES_URL;
+const databaseUri =
+  process.env.DATABASE_URI ||
+  process.env.SUPABASE_POSTGRES_URL ||
+  process.env.POSTGRES_URL_NON_POOLING ||
+  process.env.POSTGRES_URL;
 
 export default buildConfig({
   admin: {
@@ -21,6 +28,8 @@ export default buildConfig({
     },
   },
   collections: [Orders, OrderActivities, Users],
+  cors: ['http://localhost:3000', 'https://*.vercel.app'],
+  csrf: ['http://localhost:3000', 'https://*.vercel.app'],
   editor: lexicalEditor({}),
   secret: process.env.PAYLOAD_SECRET || 'payload-manufacturing-secret-vanguard-ops-2026',
   typescript: {
@@ -31,8 +40,13 @@ export default buildConfig({
   db: databaseUri
     ? postgresAdapter({
         pool: {
-          connectionString: databaseUri,
+          connectionString: databaseUri.replace('?sslmode=require', '').replace('&sslmode=require', ''),
+          ssl: {
+            rejectUnauthorized: false,
+          },
         },
+        push: false,
+        tablesFilter: ['orders*', 'order_activities*', 'users*', 'payload_*'],
       })
     : sqliteAdapter({
         client: {

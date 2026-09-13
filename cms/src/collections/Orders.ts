@@ -159,6 +159,11 @@ export const Orders: CollectionConfig = {
           type: 'text',
           label: 'Waybill / Dispatch Tracking Code',
         },
+        {
+          name: 'estimated_delivery',
+          type: 'text',
+          label: 'Estimated Delivery Date',
+        },
       ],
     },
   ],
