@@ -14,31 +14,12 @@ import {
   Database,
   ExternalLink
 } from 'lucide-react';
-import { socket } from '../services/socket';
-import { isSupabaseConfigured } from '../services/supabase';
 import { useAuth } from '../context/AuthContext';
 
 export default function Navbar({ onOpenNewOrder }) {
-  const [isConnected, setIsConnected] = useState(socket.connected);
   const { user, isAuthenticated, logout, isOfficeAdmin, isWarehouseAdmin, isClient } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    function onConnect() {
-      setIsConnected(true);
-    }
-    function onDisconnect() {
-      setIsConnected(false);
-    }
-
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
-
-    return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-    };
-  }, []);
+  const cmsUrl = import.meta.env.VITE_PAYLOAD_CMS_URL || 'http://localhost:3001/admin';
 
   const handleLogout = () => {
     logout();
@@ -114,38 +95,22 @@ export default function Navbar({ onOpenNewOrder }) {
                     <span>Warehouse Ops</span>
                   </NavLink>
                 )}
-
-                {/* Admin Hub - Directly redirects to Payload CMS Admin (Only for Admins) */}
-                {(isOfficeAdmin || isWarehouseAdmin) && (
-                  <a 
-                    href={import.meta.env.VITE_PAYLOAD_CMS_URL || 'http://localhost:3001/admin'} 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    className="relative flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-purple-300 hover:text-white bg-purple-950/60 hover:bg-purple-900/80 rounded-md border border-purple-800/60 transition-colors shadow-sm"
-                    title="Launch Payload CMS Admin (/admin)"
-                  >
-                    <Database size={13} className="text-purple-400" />
-                    <span>Admin Hub</span>
-                    <ExternalLink size={10} className="text-purple-400/80" />
-                  </a>
-                )}
               </nav>
             )}
           </div>
 
-          {/* Right actions: User identity, Live Status, Logout / Login */}
+          {/* Right actions: CMS button, User identity, Logout / Login */}
           <div className="flex items-center gap-2.5">
-            {/* Live Socket Status */}
-            <div 
-              className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono border transition-colors ${
-                isConnected
-                  ? 'bg-emerald-950/40 border-emerald-800/40 text-emerald-400'
-                  : 'bg-amber-950/40 border-amber-800/40 text-amber-400'
-              }`}
+            {/* Direct CMS Admin Redirect Button */}
+            <a
+              href={cmsUrl}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-950/60 hover:bg-purple-900/80 text-purple-300 hover:text-white border border-purple-800/60 text-xs font-semibold shadow-sm transition-all active:scale-95"
+              title="Open Payload CMS Admin (/admin)"
             >
-              <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'}`} />
-              <span>{isConnected ? (isSupabaseConfigured() ? 'SUPABASE CLOUD' : 'LIVE SYNC') : 'CONNECTING'}</span>
-            </div>
+              <Database size={13} className="text-purple-400" />
+              <span>CMS</span>
+              <ExternalLink size={10} className="text-purple-400/80" />
+            </a>
 
             {/* If Authenticated: User Badge & Role */}
             {isAuthenticated ? (
@@ -212,12 +177,10 @@ export default function Navbar({ onOpenNewOrder }) {
                   <span className="text-xs">Warehouse</span>
                 </NavLink>
                 <a
-                  href={import.meta.env.VITE_PAYLOAD_CMS_URL || 'http://localhost:3001/admin'}
-                  target="_blank"
-                  rel="noreferrer"
+                  href={cmsUrl}
                   className={navItemClass({ isActive: false })}
                 >
-                  <span className="text-xs text-purple-300">Admin Hub</span>
+                  <span className="text-xs text-purple-300">CMS</span>
                 </a>
               </>
             )}
@@ -228,12 +191,10 @@ export default function Navbar({ onOpenNewOrder }) {
                   <span className="text-xs">Warehouse</span>
                 </NavLink>
                 <a
-                  href={import.meta.env.VITE_PAYLOAD_CMS_URL || 'http://localhost:3001/admin'}
-                  target="_blank"
-                  rel="noreferrer"
+                  href={cmsUrl}
                   className={navItemClass({ isActive: false })}
                 >
-                  <span className="text-xs text-purple-300">Admin Hub</span>
+                  <span className="text-xs text-purple-300">CMS</span>
                 </a>
               </>
             )}

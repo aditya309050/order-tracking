@@ -32,7 +32,7 @@ export async function loginUser(credentials) {
         token: `sb_${matchedOrder.id}`,
         user: {
           id: matchedOrder.id,
-          username: matchedOrder.client_access_id || username,
+          username: matchedOrder.client_access_id || cleanUser,
           role: 'CLIENT',
           name: matchedOrder.client_name,
           client_access_id: matchedOrder.client_access_id
@@ -40,13 +40,13 @@ export async function loginUser(credentials) {
       };
     }
 
-    // Email & Password login for Admin via Payload CMS users API
-    if (username.includes('@')) {
+    // Helper function to try Payload CMS login
+    async function tryPayloadLogin(emailToTry) {
       try {
-        const payloadRes = await fetch('http://localhost:3001/api/users/login', {
+        const payloadRes = await fetch(`${CMS_BASE}/api/users/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: username.toLowerCase().trim(), password })
+          body: JSON.stringify({ email: emailToTry.toLowerCase().trim(), password })
         });
         const payloadData = await payloadRes.json();
         if (payloadRes.ok && payloadData.user) {
@@ -63,12 +63,39 @@ export async function loginUser(credentials) {
           };
         }
       } catch (e) {
-        // Fall through to standard checks
+        // Network or fetch error
+      }
+      return null;
+    }
+
+    const targetEmail = cleanUser.includes('@') ? cleanUser.toLowerCase() : null;
+
+    if (targetEmail) {
+      const result = await tryPayloadLogin(targetEmail);
+      if (result) return result;
+    }
+
+    // If direct email failed or user typed username/name (e.g. "aditya" or typo "adityaraj309050@gmial.com"):
+    const lookupTerm = cleanUser.includes('@') ? cleanUser.split('@')[0] : cleanUser;
+    if (lookupTerm) {
+      try {
+        const { data: matchedUsers } = await supabase
+          .from('users')
+          .select('email')
+          .or(`email.ilike.${lookupTerm.toLowerCase()}%,name.ilike.%${lookupTerm}%`)
+          .limit(1);
+
+        if (matchedUsers?.[0]?.email && matchedUsers[0].email.toLowerCase() !== targetEmail) {
+          const result = await tryPayloadLogin(matchedUsers[0].email);
+          if (result) return result;
+        }
+      } catch (e) {
+        // Continue
       }
     }
 
-    // Default admin checks for Supabase mode
-    if ((username === 'office' || username === 'admin') && (password === 'office123' || password === 'admin123')) {
+    // Default admin checks for Supabase demo mode
+    if ((cleanUser === 'office' || cleanUser === 'admin') && (password === 'office123' || password === 'admin123')) {
       return {
         success: true,
         token: 'sb_admin_token',
@@ -76,13 +103,16 @@ export async function loginUser(credentials) {
       };
     }
 
-    if (username === 'warehouse' && password === 'warehouse123') {
+    if (cleanUser === 'warehouse' && password === 'warehouse123') {
       return {
         success: true,
         token: 'sb_wh_token',
         user: { id: 2, username: 'warehouse', role: 'WAREHOUSE_ADMIN', name: 'Shop Floor & Warehouse Ops' }
       };
     }
+
+    // In Supabase mode, don't fallback to offline Express server; give clear error
+    throw new Error('Authentication failed. Please check your credentials. (For Staff/Admin, ensure your email/username is correct; for Clients, use your Order # or Client ID).');
   }
 
   // Fallback to Express backend API
