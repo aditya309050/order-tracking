@@ -1,18 +1,34 @@
 {
-  "name": "order-tracking-system",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Fullstack Order Tracking & Fabrication Pipeline (React + Tailwind + Node/Express + SQLite + Socket.IO)",
+  "name": "order-tracking",
+  "version": "2.0.0",
+  "description": "Unified Next.js + Payload CMS order tracking & fabrication pipeline, connected to Supabase PostgreSQL and Vercel Blob.",
+  "type": "module",
   "scripts": {
-    "dev": "concurrently -n \"CLIENT(3000),PAYLOAD_CMS(3001)\" -c \"cyan,magenta\" \"npm run dev --prefix client\" \"npm run dev --prefix cms\"",
-    "dev:all": "concurrently -n \"CLIENT(3000),PAYLOAD_CMS(3001)\" -c \"cyan,magenta\" \"npm run dev --prefix client\" \"npm run dev --prefix cms\"",
-    "dev:client": "npm run dev --prefix client",
-    "dev:cms": "npm run dev --prefix cms",
-    "build": "npm run build --prefix cms",
-    "start": "npm run start --prefix cms",
-    "dev:fullstack": "concurrently -n \"SERVER,CLIENT\" -c \"cyan,magenta\" \"npm run start --prefix server\" \"npm run dev --prefix client\""
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "generate:types": "payload generate:types"
+  },
+  "dependencies": {
+    "@payloadcms/db-postgres": "^3.89.0",
+    "@payloadcms/db-sqlite": "^3.89.0",
+    "@payloadcms/next": "^3.89.0",
+    "@payloadcms/richtext-lexical": "^3.89.0",
+    "@payloadcms/storage-vercel-blob": "^3.89.0",
+    "@supabase/supabase-js": "^2.116.0",
+    "graphql": "^16.8.1",
+    "lucide-react": "^1.44.0",
+    "next": "15.2.9",
+    "payload": "^3.89.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "@tailwindcss/postcss": "^4.1.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tailwindcss": "^4.1.0",
+    "typescript": "^5.7.0"
   }
 }

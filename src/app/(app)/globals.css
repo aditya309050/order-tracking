@@ -1,0 +1,104 @@
+@import 'tailwindcss';
+
+:root {
+  --bg-canvas: #090b10;
+  --bg-surface: #11141c;
+  --bg-surface-elevated: #161a24;
+  --border-subtle: #1f2533;
+  --border-strong: #2a3346;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --brand: #3b82f6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.011em;
+}
+
+/* Subtle ambient gradient for a more polished canvas */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60rem 40rem at 15% -10%, rgba(37, 99, 235, 0.08), transparent 60%),
+    radial-gradient(50rem 40rem at 100% 0%, rgba(124, 58, 237, 0.06), transparent 55%);
+}
+
+.font-mono,
+.tabular-nums {
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Precision scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #232a3b;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #313b52;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #232a3b transparent;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: rgba(37, 99, 235, 0.35);
+  color: #fff;
+}
+
+/* Global smoothing for interactive elements */
+button,
+a,
+input,
+select,
+textarea {
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease;
+}
+
+@media print {
+  body::before {
+    display: none;
+  }
+}

@@ -43,8 +43,33 @@ CREATE TABLE IF NOT EXISTS public.order_activities (
   status_to TEXT NOT NULL,
   note TEXT,
   actor_role TEXT DEFAULT 'WAREHOUSE',
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  -- Required by Payload CMS (every collection has created_at AND updated_at):
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- 3b. Media / File Uploads (Payload upload collection backed by Vercel Blob)
+CREATE TABLE IF NOT EXISTS public.media (
+  id SERIAL PRIMARY KEY,
+  alt VARCHAR,
+  prefix VARCHAR DEFAULT 'media',
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  url VARCHAR,
+  thumbnail_u_r_l VARCHAR,
+  filename VARCHAR,
+  mime_type VARCHAR,
+  filesize NUMERIC,
+  width NUMERIC,
+  height NUMERIC,
+  focal_x NUMERIC,
+  focal_y NUMERIC
+);
+CREATE UNIQUE INDEX IF NOT EXISTS media_filename_idx ON public.media (filename);
+
+-- NOTE: Payload also manages the users, users_sessions, and payload_* tables
+-- (created via Payload's dev schema push). This profiles table below is legacy
+-- and unused by the app — kept for reference only.
 
 -- 4. Create User Profiles (extends Supabase auth.users)
 CREATE TABLE IF NOT EXISTS public.profiles (
