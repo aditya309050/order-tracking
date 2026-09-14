@@ -17,6 +17,7 @@ const serverFunction = async function (args: any) {
   });
 };
 
+
 export default async function Layout({ children }: Args) {
   return (
     <RootLayout config={config} importMap={importMap} serverFunction={serverFunction}>
